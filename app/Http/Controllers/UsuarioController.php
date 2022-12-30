@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\UsuarioRequest;
 use App\Models\Usuario;
 use App\Models\Permissions;
 use App\Models\SysLogs;
@@ -62,9 +63,9 @@ class UsuarioController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(UsuarioRequest $request)
     {
-        // try {
+        try {
 
         $requestData = $request->all();
         $requestData['user_in'] = $this->user->id;
@@ -75,7 +76,7 @@ class UsuarioController extends Controller
         $user = [
             'name' => $request->nome,
             'perfil' => 2,
-            'password' => bcrypt("10203040"),
+            'password' => bcrypt( $requestData['password']),
             'usuario_id' => $result->id,
             'login' =>  $requestData['login']
         ];
@@ -83,9 +84,9 @@ class UsuarioController extends Controller
 
 
         return response()->json(['msg' => "Usuario adicionado com sucesso", "conteudo" => $result], 201);
-        // } catch (\Exception $e) {
-        //     return response()->json("Falha ao incluir registro", 200);
-        // }
+        } catch (\Exception $e) {
+            return response()->json($e, 200);
+        }
     }
 
     /**
@@ -117,7 +118,7 @@ class UsuarioController extends Controller
      * @param  \App\Models\evento  $evento
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(UsuarioRequest $request, $id)
     {
         try {
             $evento =   Usuario::find($id);
@@ -128,16 +129,14 @@ class UsuarioController extends Controller
             $uss =   User::find($requestData['usuario_id']);
             $uss->login  = $requestData['login'];
             $uss->perfil  = $requestData['perfil'];
+            $uss->password  = bcrypt( $requestData['password']);
+
 
             $uss->save();
 
-            if ($result) {
                 return response()->json(['msg' => "Usuario Atualizado com sucesso", "conteudo" => $result], 201);
-            } else {
-                return response()->json("Falha ao incluir registro", 200);
-            }
         } catch (\Exception $e) {
-            return response()->json("Falha " . $e, 400);
+            return response()->json($e, 200);
         }
     }
 
