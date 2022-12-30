@@ -132,7 +132,7 @@ class UsuarioController extends Controller
             $uss->save();
 
             if ($result) {
-                return response()->json(['msg' => "Usuario  Atualizado com sucesso", "conteudo" => $result], 201);
+                return response()->json(['msg' => "Usuario Atualizado com sucesso", "conteudo" => $result], 201);
             } else {
                 return response()->json("Falha ao incluir registro", 200);
             }
